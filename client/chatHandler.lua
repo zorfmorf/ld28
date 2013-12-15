@@ -87,12 +87,12 @@ function chatHandler_draw()
         love.graphics.setColor(200, 200, 200, 255)
       end
       local w,l = font:getWrap(m, mbw)
-      delim = delim - font:getHeight() * l
+      delim = delim - font:getHeight() * l - 5
       if delim < ypad then break end
-      love.graphics.printf( m, xpad + 5, delim, mbw, "left" )
+      love.graphics.printf( m, xpad, delim, mbw, "left" )
     end
   else
-    love.graphics.print("Enter a name of at least 4 digits and press enter", 100, 100)
+    love.graphics.printf(text_tutorial, xw / 5, yw / 5, xw / 5 * 3, "left")
   end
   
   -- ban box
@@ -107,6 +107,17 @@ function chatHandler_draw()
   end
 end
 
+local function validKey(key)  
+  
+  for i=97,122 do
+     if string.char(i) == key then return true end
+  end
+  
+  if key == " " or key == "?" or key == "!" then return true end
+  
+  return false
+end
+
 function chatHandler_input(key)
   if key == "return" and ((nameset and input:len() > 0) or (not nameset and input:len() > 3)) then
      local retm = input
@@ -119,7 +130,7 @@ function chatHandler_input(key)
      end
   elseif key == "backspace" then
      input = input:sub(1, input:len() - 1)
-  elseif key:len() == 1 and key ~= "#" then
+  elseif key:len() == 1 and validKey(key) and input:len() < 100 then
      input = input..key
   end
   return nil

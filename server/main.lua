@@ -2,17 +2,35 @@
 require("enet")
 require 'slither'
 require 'challenge'
+require 'names'
+require 'bot'
 
 STATE_PAUSED = 1
 STATE_ACTIVE = 2
 STATE_COUNTING = 3
 
 challenge = nil
+challengetimer = 0
 
 blacklist = {}
+botlist = {}
 
 port = 27395
 
+-- backup messages file
+local function backup()
+	
+	love.filesystem.remove( "mssgl.lst" )
+	
+	print("Starting backup...")
+	
+	for i,v in pairs(mssgl) do
+		success, errormsg = love.filesystem.append( "mssgl.lst", i.."\n")
+	end
+	
+	print("backup finished")
+	
+end
 
 local function sendAll(message)
 	for i=1,host:peer_count() do
@@ -63,10 +81,28 @@ end
 
 function love.load()
 	math.randomseed(os.time())
+	
+	-- check the messages file
+	mssgl = {}
+	mssgk = {}
+	if love.filesystem.exists("mssgl.lst") then
+		for line in love.filesystem.lines("mssgl.lst") do
+			print(line)
+			mssgl[line] = true
+			table.insert(mssgk, line)
+		end
+	else
+		mssgl = {"test"}
+		mssgk = {"test"}
+	end
+	
+	
 	host = enet.host_create("localhost:"..port)
 	print("Listening on port "..port)
 	users = {}
 	state = STATE_PAUSED
+	table.insert(botlist, Bot())
+	table.insert(botlist, Bot())
 end
 
 local function getUsersList()
@@ -90,7 +126,12 @@ function love.update(dt)
 			if t[1] == "7" and #t == 3 then
 				sendAll(event.data)
 				
-				if state == STATE_ACTIVE then
+				if mssgl[t[3]] == false then
+					mssgl[t[3]] = true
+					table.insert(mssgk, t[3])
+				end
+				
+				if state == STATE_ACTIVE and challenge ~= nil then
 					
 					if not challenge:check(t[3]) then
 						
@@ -116,7 +157,12 @@ function love.update(dt)
 					event.peer:send("4"..getUsersList())
 					sendAll("6#"..users[event.peer:index()])
 					event.peer:send("3#Welcome, "..t[2])
+					event.peer:send("3#To blame someone, write, \"blame name\""..t[2])
 					event.peer:send("3#Remember, you only get one chance")
+
+					if state == STATE_ACTIVE and challenge ~= nil then
+						event.peer:send("3#Current Challenge: "..challenge:getText())
+					end
 					
 					if state == STATE_PAUSED then
 						state = STATE_COUNTING
@@ -156,8 +202,45 @@ function love.update(dt)
 			sendAll("3#New Challenge: "..challenge:getText())
 		end
 	end
+	
+	if state == STATE_ACTIVE then
+	
+		if challenge == nil then
+			challengetimer = challengetimer - dt
+			if challengetimer < 0 then
+				challenge = generateChallenge()
+				sendAll("3#New Challenge: "..challenge:getText())
+			end
+		else
+			finished = challenge:update(dt)
+			if finished then
+				sendAll("3#Challenge finished!")
+				challenge = nil
+				challengetimer = math.random(30, 100)
+			end
+		end
+		
+	end
+	
+	
+	for i,bot in pairs(botlist) do
+	
+		local alive = bot:update(dt)
+		
+		if not alive then
+			botlist[i] = nil
+		end
+		
+	end
+	
 end
 
 function love.draw()
-	love.graphics.print("I am a running server application. If you terminate me, I will terminate you!", 50, 50)
+	love.graphics.print("I am a running server application. If you terminate ME, I will terminate YOU!", 50, 50)
+end
+
+
+
+function love.quit()
+	backup()
 end

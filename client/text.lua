@@ -1,0 +1,2 @@
+
+ text_tutorial = " You are about to connect to an actual online chatroom. Your goal is to correctly identify which one of the users is a bot.\n \n YOU ONLY GET ONE guess. If you're wrong, you're out! \n\n But beware - the server will do anything to assist the bots and kick you out. \n\n To make it a little bit harder, everything is lower case and no special characters besides space are allowed. \n\n If you are ready to play, enter a 4+ letter name and press ENTER."

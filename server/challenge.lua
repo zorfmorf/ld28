@@ -28,6 +28,8 @@ class "NoLetter" {
 		
 		self.letter = string.char(math.random(97, 122))
 		self.text = "Don't use the letter "..self.letter
+		self.timeout = math.random(20, 300)
+		self.time = 0
 		
 	end,
 	
@@ -37,7 +39,14 @@ class "NoLetter" {
 	
 	-- return true if text passes challenge
 	check = function(self, input)
-		return input:find(self.letter) == nil
+		--return input:find(self.letter) == nil
+		return true
+	end,
+	
+	-- returns true if challenge is finished
+	update = function(self, dt)
+		self.time = self.time + dt
+		return self.time > self.timeout
 	end
 
 }

@@ -1,6 +1,7 @@
 
 require 'chatHandler'
 require("enet")
+require 'text'
 
 local host = nil
 local client = nil

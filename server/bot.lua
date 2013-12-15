@@ -1,0 +1,78 @@
+
+class "Bot" {
+
+	name = "Bot",
+	host = nil,
+	client = nil,
+	reactChance = 0, -- percentage change of answering something
+	reactSpeed = 0, -- average answering speed in seconds
+	reaction = -1,
+	textSpeed = 0, -- average text speed
+	text = -1,
+
+	__init__ = function(self)
+		
+		local ind = math.random(1, #nameslist)
+		print("trying to get name "..ind)
+		self.name = nameslist[ind]
+		self.host = enet.host_create()
+		self.client = self.host:connect("localhost:27395")
+		self.reactChance = math.random(60)
+		self.reactSpeed = math.random(1, 10)
+		self.alive = math.random(800)
+		self.text = math.random(20)
+		self.textSpeed = math.random(20)
+		
+	end,
+	
+	-- returns true if the bot is still alive
+	update = function(self, dt)
+	
+		-- handle reactions
+		if self.reaction >= 0 then
+			self.reaction = self.reaction - dt
+			if self.reaction < 0 then
+				self.client:send("7#"..self.name.."#"..self:getReaction())
+			end
+		end
+		
+		if self.text >= 0 then
+			self.text = self.text - dt
+			if self.text < 0 then
+				self.client:send("7#"..self.name.."#"..self:getReaction())
+				self.text = math.random(self.textSpeed * 2)
+			end
+		end
+	
+		-- handle network
+		local event = self.host:service()
+		if event then
+			if event.type == "connect" then
+				self.client:send("6#"..self.name)
+			elseif event.type == "receive" then
+				if self.reaction < 0 and math.random(100) > self.reactChance then
+					self.reaction = math.random(self.reactSpeed * 2)
+				end
+			end
+		end
+		
+		--handle timeout
+		self.alive = self.alive - dt
+		if self.alive < 0 then
+			self.client:disconnect()
+			self.host:flush()
+			return false
+		end
+		
+		return true
+	end,
+	
+	getReaction = function(self)
+		return mssgk[math.random(1, #mssgk)]
+	end,
+	
+	getIndex = function(self)
+		return self.client:index()
+	end
+
+}
