@@ -23,6 +23,8 @@ function chatHandler_init()
   
   font = love.graphics.newFont( "res/Xolonium-Regular.otf", love.graphics:getHeight() / 40 )
   fontOver = love.graphics.newFont( "res/Xolonium-Regular.otf", love.graphics:getHeight() / 5 )
+  fontTitle = love.graphics.newFont( "res/Xolonium-Regular.otf", love.graphics:getHeight() / 9 )
+  fontNumber = love.graphics.newFont( "res/Xolonium-Regular.otf", love.graphics:getHeight() / 20 )
   
 end
 
@@ -52,24 +54,31 @@ function chatHandler_draw()
   -- draw input box
   
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.rectangle("line", xpad, yw - ypad - yw / 20, xw - xpad * 2, yw / 20 )
+  love.graphics.rectangle("line", xpad, yw - ypad - yw / 20, xw * 0.9 - xpad * 2, yw / 20 )
   
   local ti = input
   if blink then ti = ti.."|" end
   
   love.graphics.print(ti, xpad * 2, yw - ypad * 0.5 - yw / 20)
+
   
   if nameset then
+    
+    -- timer 
+    
+    love.graphics.setFont(fontNumber)
+    love.graphics.printf(math.floor(globaltimer), xw - xw * 0.1, yw - ypad * 1.5 - yw / 20, xw * 0.1, "center")
+    love.graphics.setFont( font )
   
     -- draw users box
   
-    love.graphics.rectangle("line", xw - xw * 0.2, ypad, xw * 0.2 - xpad, yw - ypad * 3 - yw / 20 )
+    love.graphics.rectangle("line", xw - xw * 0.25, ypad, xw * 0.25 - xpad, yw - ypad * 3 - yw / 20 )
     local delim = ypad
     for i,u in pairs(users) do
-      love.graphics.print(u, xw - xw * 0.2 + 5, delim)
+      love.graphics.print(u, xw - xw * 0.25 + 10, delim)
       delim = delim + font:getHeight()
       if delim > yw - ypad * 5 - yw / 20 then 
-        love.graphics.print("...", xw - xw * 0.2 + 5, delim)
+        love.graphics.print("...", xw - xw * 0.25 + 5, delim)
         break
       end
     end
@@ -77,7 +86,7 @@ function chatHandler_draw()
   
     -- draw message box
     
-    local mbw = xw * 0.8 - xpad * 2
+    local mbw = xw * 0.75 - xpad * 2
     love.graphics.rectangle("line", xpad, ypad, mbw, yw - ypad * 3 - yw / 20 )
     local delim = ypad + yw - ypad * 3 - yw / 20
     for i=#messages,1, -1 do
@@ -92,11 +101,13 @@ function chatHandler_draw()
       love.graphics.printf( m, xpad, delim, mbw, "left" )
     end
   else
-    love.graphics.printf(text_tutorial, xw / 5, yw / 5, xw / 5 * 3, "left")
+    love.graphics.setFont(fontTitle)
+    love.graphics.print(text_title, xw / 2, yw / 10, 0, 1, 1, fontTitle:getWidth(text_title) / 2)
+    love.graphics.setFont( font )
+    love.graphics.printf(text_tutorial, xw / 5, yw / 5 * 2, xw / 5 * 3, "left")
   end
   
   -- ban box
-  
   if banned then
     love.graphics.setFont(fontOver)
     love.graphics.setColor(0, 0, 0, 200 * math.sin(math.min(math.pi / 2, bantimer * 0.3)))
@@ -110,6 +121,10 @@ end
 local function validKey(key)  
   
   for i=97,122 do
+     if string.char(i) == key then return true end
+  end
+  
+  for i=48,57 do
      if string.char(i) == key then return true end
   end
   

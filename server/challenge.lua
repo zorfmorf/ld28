@@ -39,8 +39,7 @@ class "NoLetter" {
 	
 	-- return true if text passes challenge
 	check = function(self, input)
-		--return input:find(self.letter) == nil
-		return true
+		return input:find(self.letter) == nil
 	end,
 	
 	-- returns true if challenge is finished

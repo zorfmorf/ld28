@@ -8,6 +8,7 @@ local client = nil
 nameset = false
 banned = false
 name = "Anonymous"
+globaltimer = 110
 
 local function split(inputstr, sep)
   if sep == nil then
@@ -50,6 +51,8 @@ function love.update(dt)
           elseif t[1] == "2" then
             chatHandler_add("Server: "..t[2])
             banned = true
+          elseif t[1] == "9" then
+            globaltimer = t[2]
           elseif t[1] == "4" then
             users = {}
             for i,u in pairs(t) do
@@ -62,6 +65,7 @@ function love.update(dt)
           end
         end
       end
+      globaltimer = math.max(0, globaltimer - dt)
     end
 end
 

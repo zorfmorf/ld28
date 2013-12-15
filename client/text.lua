@@ -1,2 +1,3 @@
+text_title = "CHATBOX GALORE"
 
- text_tutorial = " You are about to connect to an actual online chatroom. Your goal is to correctly identify which one of the users is a bot.\n \n YOU ONLY GET ONE guess. If you're wrong, you're out! \n\n But beware - the server will do anything to assist the bots and kick you out. \n\n To make it a little bit harder, everything is lower case and no special characters besides space are allowed. \n\n If you are ready to play, enter a 4+ letter name and press ENTER."
+ text_tutorial = "You are about to connect to an online chatroom. A timer will run down and if it reaches zero you will get banned. Your goal is to stay in the chatroom for as long as possible. \n\n You can increase the timer by\n * chatting\n * successfully blaming a bot\n * winning mini games\n\n YOU ONLY GET ONE CHANCE \n\n If you are ready to play, enter a 4+ letter name and press ENTER."

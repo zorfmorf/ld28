@@ -14,6 +14,7 @@ challengetimer = 0
 
 blacklist = {}
 botlist = {}
+bottimer = math.random(50)
 
 port = 27395
 
@@ -45,6 +46,12 @@ local function sendAll(message)
 	end
 end
 
+local function initChallenge()
+	sendAll("3#New Challenge imminent!")
+	state = STATE_COUNTING
+	counter = 6
+end
+
 local function isBanned(name)
 	
 	for i,bn in pairs(blacklist) do
@@ -59,7 +66,7 @@ end
 
 local function ban(index)
 	local peer = host:get_peer(index)
-	local name = users[peer:index()]
+	local name = users[peer:index()][1]
 	table.insert(blacklist, name)
 	peer:send("2#You failed. BANNED")
 	peer:disconnect_later()
@@ -87,7 +94,6 @@ function love.load()
 	mssgk = {}
 	if love.filesystem.exists("mssgl.lst") then
 		for line in love.filesystem.lines("mssgl.lst") do
-			print(line)
 			mssgl[line] = true
 			table.insert(mssgk, line)
 		end
@@ -101,14 +107,13 @@ function love.load()
 	print("Listening on port "..port)
 	users = {}
 	state = STATE_PAUSED
-	table.insert(botlist, Bot())
-	table.insert(botlist, Bot())
+
 end
 
 local function getUsersList()
 	local rets = ""
 	for i,u in pairs(users) do
-		rets = rets.."#"..u
+		rets = rets.."#"..i.." - "..u[1]
 	end
 	return rets
 end
@@ -135,7 +140,7 @@ function love.update(dt)
 					
 					if not challenge:check(t[3]) then
 						
-						sendAll("3#"..users[event.peer:index()].." failed the challenge")
+						sendAll("3#"..users[event.peer:index()][1].." failed the challenge")
 						ban(event.peer:index())
 						
 					end
@@ -152,21 +157,23 @@ function love.update(dt)
 					event.peer:disconnect_later()
 				
 				else
-				
-					users[event.peer:index()] = t[2]
-					event.peer:send("4"..getUsersList())
-					sendAll("6#"..users[event.peer:index()])
+					
+					users[event.peer:index()] = {}
+					users[event.peer:index()][1] = t[2]
+					users[event.peer:index()][2] = 60
+					sendAll("6#"..users[event.peer:index()][1])
 					event.peer:send("3#Welcome, "..t[2])
-					event.peer:send("3#To blame someone, write, \"blame name\""..t[2])
+					event.peer:send("3#To blame someone, write: blame [id]")
 					event.peer:send("3#Remember, you only get one chance")
-
+					event.peer:send("4"..getUsersList())
+					event.peer:send("9#"..users[event.peer:index()][2])
+					
 					if state == STATE_ACTIVE and challenge ~= nil then
 						event.peer:send("3#Current Challenge: "..challenge:getText())
 					end
 					
 					if state == STATE_PAUSED then
-						state = STATE_COUNTING
-						counter = 6
+						initChallenge()
 					end
 				
 				end
@@ -183,7 +190,7 @@ function love.update(dt)
 			print("Disconnect: ", event.data, event.peer)
 			
 			if users[event.peer:index()] ~= nil then
-				sendAll("5#"..users[event.peer:index()])
+				sendAll("5#"..users[event.peer:index()][1])
 				users[event.peer:index()] = nil
 				sendAll("4"..getUsersList())
 			end
@@ -222,7 +229,7 @@ function love.update(dt)
 		
 	end
 	
-	
+	-- handle bots
 	for i,bot in pairs(botlist) do
 	
 		local alive = bot:update(dt)
@@ -231,6 +238,29 @@ function love.update(dt)
 			botlist[i] = nil
 		end
 		
+	end
+	
+	bottimer = bottimer - dt
+	if bottimer < 0 then
+		table.insert(botlist, Bot())
+		bottimer = bottimer + 100
+	end
+	
+	-- handle timer
+	for i=1,host:peer_count() do
+	
+		local peer = host:get_peer(i)
+
+		if peer:state() == "connected" and users[peer:index()] ~= nil then
+			
+			users[peer:index()][2] = users[peer:index()][2] - dt
+			
+			if users[peer:index()][2] <= 0 then
+				ban(peer:index())
+			end
+
+		end
+	
 	end
 	
 end
