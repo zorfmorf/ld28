@@ -142,23 +142,6 @@ local function calcPoints(length)
 	return points
 end
 
-local function isBot(index)
-
-	for i,bot in pairs(botlist) do
-	
-		print( "This bot hast index", bot:getIndex() )
-		
-		if bot:getIndex() == index then
-			return true
-		end
-	
-	end
-	
-	return false
-	
-end
-
-
 function love.update(dt)
 	local event = host:service(100)
 	if event then 
@@ -177,7 +160,7 @@ function love.update(dt)
 					
 					sendAll(t[2].." laid the blame")
 					
-					if isBot(tonumber(id)) then
+					if users[tonumber(id)][3] then
 						
 						ban(tonumber(id))
 						addTime(event.peer:index(), 60)
@@ -213,7 +196,7 @@ function love.update(dt)
 			end
 			
 			-- user authenticates self
-			if t[1] == "6" and #t == 2 then
+			if t[1] == "6" and #t == 3 then
 				
 				if isBanned(t[2]) then
 				
@@ -225,6 +208,7 @@ function love.update(dt)
 					users[event.peer:index()] = {}
 					users[event.peer:index()][1] = t[2]
 					users[event.peer:index()][2] = 60
+					users[event.peer:index()][3] = t[3] == "true" -- is bot
 					sendAll("6#"..users[event.peer:index()][1])
 					event.peer:send("3#Welcome, "..t[2])
 					event.peer:send("3#To blame someone, write: blame [id]")

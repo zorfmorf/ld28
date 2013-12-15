@@ -23,6 +23,8 @@ local function split(inputstr, sep)
 end
 
 function love.load()
+  math.randomseed(os.time())
+  
   host = enet.host_create()
   client = host:connect("localhost:27395")
   chatHandler_init()
@@ -45,7 +47,7 @@ function love.update(dt)
       if event then
         if event.type == "connect" then
           chatHandler_add("Connected to "..tostring(event.peer))
-          client:send("6#"..name)
+          client:send("6#"..name.."#false")
         elseif event.type == "receive" then
           print(event.data)
           t = split(event.data, "#")

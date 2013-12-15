@@ -48,7 +48,7 @@ class "Bot" {
 		local event = self.host:service()
 		if event then
 			if event.type == "connect" then
-				self.client:send("6#"..self.name)
+				self.client:send("6#"..self.name.."#true")
 			elseif event.type == "receive" then
 				if self.reaction < 0 and math.random(100) < self.reactChance then
 					self.reaction = math.random(self.reactSpeed * 2)
@@ -69,10 +69,6 @@ class "Bot" {
 	
 	getReaction = function(self)
 		return mssgk[math.random(1, #mssgk)]
-	end,
-	
-	getIndex = function(self)
-		return self.client:index()
 	end
 
 }
