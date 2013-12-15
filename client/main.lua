@@ -5,6 +5,7 @@ require("enet")
 local host = nil
 local client = nil
 nameset = false
+banned = false
 name = "Anonymous"
 
 local function split(inputstr, sep)
@@ -28,7 +29,7 @@ end
 
 function love.update(dt)
     chatHandler_update(dt)
-    if nameset then
+    if nameset and not banned then
       local event = host:service()
       if event then
         if event.type == "connect" then
@@ -43,6 +44,11 @@ function love.update(dt)
             chatHandler_add("User "..t[2].." disconnected")
           elseif t[1] == "6" then
             chatHandler_add("User "..t[2].." connected")
+          elseif t[1] == "3" then
+            chatHandler_add("Server: "..t[2])
+          elseif t[1] == "2" then
+            chatHandler_add("Server: "..t[2])
+            banned = true
           elseif t[1] == "4" then
             users = {}
             for i,u in pairs(t) do
@@ -65,11 +71,13 @@ function love.draw()
 end
 
 function love.keypressed(key, isrepeat)
-    
-  local m, n = chatHandler_input(key)
   
-  if m ~= nil then
-    client:send("7#"..n.."#"..m)
+  if not banned then
+    local m, n = chatHandler_input(key)
+    
+    if m ~= nil then
+      client:send("7#"..n.."#"..m)
+    end
   end
   
 end
