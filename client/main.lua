@@ -52,6 +52,11 @@ function love.update(dt)
             chatHandler_add("Server: "..t[2])
             banned = true
           elseif t[1] == "9" then
+            if tonumber(t[2]) > globaltimer then
+              timerred = -1
+            else
+              timerred = 1
+            end
             globaltimer = t[2]
           elseif t[1] == "4" then
             users = {}

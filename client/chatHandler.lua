@@ -7,6 +7,8 @@ local bantimer = 0
 
 local blink = false
 
+timerred = 0 -- blinking of number when time gets added removed
+
 -- returns message and if the message is a server message
 local function getMssg(index)
   if messages[index][1] == nil then
@@ -39,6 +41,9 @@ function chatHandler_update(dt)
      bantimer = bantimer + dt
   end
   
+  if timerred > 0 then timerred = math.max(0, timerred - dt * 0.4) end
+  if timerred < 0 then timerred = math.min(0, timerred + dt * 0.4) end
+  
 end
 
 function chatHandler_draw()
@@ -65,10 +70,16 @@ function chatHandler_draw()
   if nameset then
     
     -- timer 
-    
+    if timerred < 0 then
+      love.graphics.setColor(255, 255 + timerred * 200, 255 + timerred * 200, 255)
+    end
+    if timerred > 0 then
+      love.graphics.setColor(255 - timerred * 200, 255, 255 - timerred * 200, 255)
+    end 
     love.graphics.setFont(fontNumber)
     love.graphics.printf(math.floor(globaltimer), xw - xw * 0.1, yw - ypad * 1.5 - yw / 20, xw * 0.1, "center")
     love.graphics.setFont( font )
+    love.graphics.setColor(255, 255, 255, 255)
   
     -- draw users box
   

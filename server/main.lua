@@ -14,7 +14,7 @@ challengetimer = 0
 
 blacklist = {}
 botlist = {}
-bottimer = math.random(50)
+bottimer = math.random(20)
 
 port = 27395
 
@@ -110,12 +110,50 @@ function love.load()
 
 end
 
+local function addTime(index, amount)
+	print("Adding time: "..amount)
+	local peer = host:get_peer(index)
+	users[peer:index()][2] = users[peer:index()][2] + amount
+	peer:send("9#"..users[peer:index()][2])
+end
+
 local function getUsersList()
 	local rets = ""
 	for i,u in pairs(users) do
 		rets = rets.."#"..i.." - "..u[1]
 	end
 	return rets
+end
+
+local function calcPoints(length)
+	
+	local points = 0
+	
+	if length > 2 then
+		points = points + 1
+	end
+	if length > 10 then
+		points = points + 10
+	end
+	if length > 20 then
+		points = points +20
+	end
+	
+	return points
+end
+
+local function isBot(index)
+
+	for i,bot in pairs(botlist) do
+		
+		if bot:getIndex() == index then
+			return true
+		end
+	
+	end
+	
+	return false
+	
 end
 
 
@@ -129,22 +167,46 @@ function love.update(dt)
 			t = split(event.data, "#")
 			
 			if t[1] == "7" and #t == 3 then
-				sendAll(event.data)
+			
+				-- check if its a blame
+				if t[3]:sub(1,5) == "blame" then
 				
-				if mssgl[t[3]] == false then
-					mssgl[t[3]] = true
-					table.insert(mssgk, t[3])
-				end
-				
-				if state == STATE_ACTIVE and challenge ~= nil then
+					local id = tonumber(t[3]:sub(6))
 					
-					if not challenge:check(t[3]) then
+					sendAll(t[2].." laid the blame")
+					
+					if isBot(tonumber(id)) then
 						
-						sendAll("3#"..users[event.peer:index()][1].." failed the challenge")
+						ban(tonumber(id))
+						addTime(event.peer:index(), 60)
+						
+					else
+						
 						ban(event.peer:index())
-						
 					end
+					
+				else
 				
+					sendAll(event.data)
+					
+					addTime(event.peer:index(), calcPoints(t[3]:len()))			
+					
+					if mssgl[t[3]] == false then
+						mssgl[t[3]] = true
+						table.insert(mssgk, t[3])
+					end
+					
+					if state == STATE_ACTIVE and challenge ~= nil then
+						
+						if not challenge:check(t[3]) then
+							
+							sendAll(users[event.peer:index()][1].." failed the challenge")
+							ban(event.peer:index())
+							
+						end
+					
+					end
+					
 				end
 			end
 			
@@ -165,7 +227,7 @@ function love.update(dt)
 					event.peer:send("3#Welcome, "..t[2])
 					event.peer:send("3#To blame someone, write: blame [id]")
 					event.peer:send("3#Remember, you only get one chance")
-					event.peer:send("4"..getUsersList())
+					sendAll("4"..getUsersList())
 					event.peer:send("9#"..users[event.peer:index()][2])
 					
 					if state == STATE_ACTIVE and challenge ~= nil then
@@ -243,7 +305,7 @@ function love.update(dt)
 	bottimer = bottimer - dt
 	if bottimer < 0 then
 		table.insert(botlist, Bot())
-		bottimer = bottimer + 100
+		bottimer = bottimer + math.random(10, 50)
 	end
 	
 	-- handle timer
@@ -256,6 +318,7 @@ function love.update(dt)
 			users[peer:index()][2] = users[peer:index()][2] - dt
 			
 			if users[peer:index()][2] <= 0 then
+				sendAll(users[peer:index()][2].." ran out of time!")
 				ban(peer:index())
 			end
 
@@ -265,10 +328,10 @@ function love.update(dt)
 	
 end
 
+
 function love.draw()
 	love.graphics.print("I am a running server application. If you terminate ME, I will terminate YOU!", 50, 50)
 end
-
 
 
 function love.quit()
