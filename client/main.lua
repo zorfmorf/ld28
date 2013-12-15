@@ -26,6 +26,15 @@ function love.load()
   host = enet.host_create()
   client = host:connect("localhost:27395")
   chatHandler_init()
+  
+  	
+	-- all audio shit
+	abanned = love.audio.newSource("res/banned.ogg")
+	abell = love.audio.newSource("res/bell.ogg")
+	amessage = love.audio.newSource("res/message.ogg")
+	atheme = love.audio.newSource("res/theme.ogg")
+	atheme:setLooping(true)
+	atheme:play()
 end
 
 
@@ -42,6 +51,7 @@ function love.update(dt)
           t = split(event.data, "#")
           if t[1] == "7" then
              chatHandler_add(t[3], t[2])
+             amessage:play()
           elseif t[1] == "5" then
             chatHandler_add("User "..t[2].." disconnected")
           elseif t[1] == "6" then
@@ -51,11 +61,13 @@ function love.update(dt)
           elseif t[1] == "2" then
             chatHandler_add("Server: "..t[2])
             banned = true
+            abanned:play()
           elseif t[1] == "9" then
             if tonumber(t[2]) > globaltimer then
-              timerred = -1
-            else
               timerred = 1
+              abell:play()
+            else
+              timerred = -1
             end
             globaltimer = t[2]
           elseif t[1] == "4" then

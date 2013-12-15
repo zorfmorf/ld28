@@ -1,0 +1,54 @@
+Xolonium 2.1  2013-10-20  Severin Meyer  <sev.ch@web.de>
+	Added glyphs to Regular and Bold:
+		← ↑ → ↓ ❰ ❱ ❲ ❳
+	Added Xolonium-Dingbats:
+		■ ▬ ▮ ▰ ▲ ▶ ▼ ◀ ◢ ◣ ◤ ◥
+		☄ ★ ☠ ☢ ☣ ♻ ⚙ ⚛ ⚠ ⚡ ✪ ❇ ❈ ❤
+		🌌 🌍 🌎 🌏 👽 💡 📡 🔋 🔧 🔫 🔭 🚀
+		😁 😃 😄 😆 😇 😈 😉 😊 😎 😐 😒 😕
+		😘 😛 😝 😞 😟 😠 😣 😭 😮 😲 😴 😵
+
+
+Xolonium 2.0.1  2013-07-12  Severin Meyer  <sev.ch@web.de>
+	Reorganised and simplified files and directories
+	Added xolonium.png
+
+
+Xolonium 2.0  2012-08-11  Severin Meyer  <sev.ch@web.de>
+	Revised curves
+	Revised thickness of uppercase diagonal stems
+	Revised outlines, advance widths and placements of diacritical marks
+	Revised hints and PS Private Dictionary
+	Revised glyphs (referencing glyphs are not listed):
+		* 1 4 6 9 @ D P R l y { } § © ®
+		¶ Ð Þ ƒ Θ Ξ α ε ζ ν ξ ν υ Є Љ Њ
+		Џ Б З Л У Ч Ъ Ы Ь Э Я б з л ч ъ
+		ы ь э я є љ њ џ • € ∂ ∙ √ ∞ ∫ ≠
+	Added glyphs to complete Adobe Latin 3 set
+	Added glyphs to complete OpenType World Glyph Set 1 (W1G)
+	Added glyphs to complete the set covered by standard Ghostscript fonts
+	Added kerning tables
+	Added Xolonium-Bold
+
+
+Xolonium 1.2  2011-02-12  Severin Meyer  <sev.ch@web.de>
+	Revised glyphs (referencing glyphs are not listed):
+		D · Ð ı
+	Added Greek glyphs to complete ISO 8859-7 set
+	Added remaining glyphs to complete Unicode Latin Extended-A block
+	Added glyphs:
+		† ‡ • … ‰ ⁄ ™ ∂ ∑ − √ ∞ ≠ ≤ ≥
+
+
+Xolonium 1.1  2011-01-17  Severin Meyer  <sev.ch@web.de>
+	Revised placement of cedilla and ogonek in accented glyphs
+	Revised glyphs (referencing glyphs are not listed):
+		, ; D K T j k v w x y ¥ § Ð ˛ €
+	Added glyphs to complete ISO 8859 sets 2,3,4,5,9,10,13,14,16
+	Added glyphs:
+		ȷ ʼ ̒ Ѐ Ѝ ѐ ѝ ‒ – — ‘ ’ ‚ ‛ “ ” „ ‟ ‹ ›
+
+
+Xolonium 1.0  2011-01-04  Severin Meyer  <sev.ch@web.de>
+		ISO 8859-1, ISO 8859-15, and
+		Ą Ć Ę Ł Ń Ś Ź Ż ą ć ę ł ń ś ź ż ı ˆ ˇ ˙ ˚ ˛ ˜

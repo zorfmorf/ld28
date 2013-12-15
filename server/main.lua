@@ -145,6 +145,8 @@ end
 local function isBot(index)
 
 	for i,bot in pairs(botlist) do
+	
+		print( "This bot hast index", bot:getIndex() )
 		
 		if bot:getIndex() == index then
 			return true
@@ -181,7 +183,7 @@ function love.update(dt)
 						addTime(event.peer:index(), 60)
 						
 					else
-						
+						print(tonumber(id), " is not a bot")						
 						ban(event.peer:index())
 					end
 					
