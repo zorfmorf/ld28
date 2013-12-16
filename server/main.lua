@@ -169,14 +169,19 @@ function love.update(dt)
 					
 					sendAll(t[2].." laid the blame")
 					
-					if users[tonumber(id)] ~= nil and users[tonumber(id)][3] then
-						
-						ban(tonumber(id))
-						addTime(event.peer:index(), 60)
-						
+					if users[tonumber(id)] ~= nil then
+					
+						if users[tonumber(id)][3] then
+							
+							ban(tonumber(id))
+							addTime(event.peer:index(), 60)
+							
+						else
+							print(tonumber(id), " is not a bot")						
+							ban(event.peer:index())
+						end
 					else
-						print(tonumber(id), " is not a bot")						
-						ban(event.peer:index())
+						event.peer:send("3#Your blame was not formatted correctly!")
 					end
 					
 				else
@@ -207,7 +212,7 @@ function love.update(dt)
 			-- user authenticates self
 			if t[1] == "6" and #t == 3 then
 				
-				if isBanned(t[2]) then
+				if t[3] == false and isBanned(t[2]) then
 				
 					event.peer:send("2#This username is banned")
 					event.peer:disconnect_later()
