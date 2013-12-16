@@ -307,7 +307,7 @@ function love.update(dt)
 			users[peer:index()][2] = users[peer:index()][2] - dt
 			
 			if users[peer:index()][2] <= 0 then
-				sendAll(users[peer:index()][2].." ran out of time!")
+				sendAll(users[peer:index()][1].." ran out of time!")
 				ban(peer:index())
 			end
 
