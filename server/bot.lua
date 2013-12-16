@@ -13,8 +13,8 @@ class "Bot" {
 	__init__ = function(self)
 		
 		local ind = math.random(1, #nameslist)
-		print("trying to get name "..ind)
 		self.name = nameslist[ind]
+		print("Created new bot with name "..self.name)
 		self.host = enet.host_create()
 		self.client = self.host:connect("localhost:27395")
 		self.reactChance = 0--math.random(50)
