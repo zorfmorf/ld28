@@ -169,7 +169,7 @@ function love.update(dt)
 					
 					sendAll(t[2].." laid the blame")
 					
-					if users[tonumber(id)][3] then
+					if users[tonumber(id)] ~= nil and users[tonumber(id)][3] then
 						
 						ban(tonumber(id))
 						addTime(event.peer:index(), 60)
