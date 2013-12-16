@@ -26,7 +26,7 @@ function love.load()
   math.randomseed(os.time())
   
   host = enet.host_create()
-  client = host:connect("localhost:27395")
+  client = host:connect("85.214.38.169:4419")
   chatHandler_init()
   
   	

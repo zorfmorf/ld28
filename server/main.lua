@@ -18,7 +18,7 @@ bottimer = math.random(20)
 
 backuptimer = 20000
 
-port = 27395
+port = 4419
 
 -- backup messages file
 local function backup()
