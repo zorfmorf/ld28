@@ -10,11 +10,13 @@ STATE_ACTIVE = 2
 STATE_COUNTING = 3
 
 challenge = nil
-challengetimer = 0
+challengetimer = 20
 
 blacklist = {}
 botlist = {}
 bottimer = math.random(20)
+
+backuptimer = 20000
 
 port = 27395
 
@@ -49,7 +51,7 @@ end
 local function initChallenge()
 	sendAll("3#New Challenge imminent!")
 	state = STATE_COUNTING
-	counter = 6
+	counter = 8
 end
 
 local function isBanned(name)
@@ -143,6 +145,13 @@ local function calcPoints(length)
 end
 
 function love.update(dt)
+
+	backuptimer = backuptimer - dt
+	if backuptimer < 0 then
+		backup()
+		backuptimer = 20000
+	end
+
 	local event = host:service(100)
 	if event then 
 	
@@ -219,10 +228,6 @@ function love.update(dt)
 					if state == STATE_ACTIVE and challenge ~= nil then
 						event.peer:send("3#Current Challenge: "..challenge:getText())
 					end
-					
-					if state == STATE_PAUSED then
-						initChallenge()
-					end
 				
 				end
 			end
@@ -258,23 +263,21 @@ function love.update(dt)
 		end
 	end
 	
-	if state == STATE_ACTIVE then
-	
-		if challenge == nil then
-			challengetimer = challengetimer - dt
-			if challengetimer < 0 then
-				challenge = generateChallenge()
-				sendAll("3#New Challenge: "..challenge:getText())
-			end
-		else
-			finished = challenge:update(dt)
-			if finished then
-				sendAll("3#Challenge finished!")
-				challenge = nil
-				challengetimer = math.random(30, 100)
-			end
+	if state == STATE_PAUSED then
+		challengetimer = challengetimer - dt
+		if challengetimer < 0 then
+			initChallenge()
 		end
-		
+	end
+	
+	if state == STATE_ACTIVE then
+		finished = challenge:update(dt)
+		if finished then
+			sendAll("3#Challenge finished!")
+			challenge = nil
+			challengetimer = math.random(30, 100)
+			state = STATE_PAUSED
+		end
 	end
 	
 	-- handle bots
