@@ -105,7 +105,7 @@ function love.load()
 	end
 	
 	
-	host = enet.host_create("localhost:"..port)
+	host = enet.host_create("85.214.38.169:"..port)
 	print("Listening on port "..port)
 	users = {}
 	state = STATE_PAUSED
