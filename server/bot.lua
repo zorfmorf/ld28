@@ -16,7 +16,7 @@ class "Bot" {
 		self.name = nameslist[ind]
 		print("Created new bot with name "..self.name)
 		self.host = enet.host_create()
-		self.client = self.host:connect("localhost:4419")
+		self.client = self.host:connect("85.214.38.169:4419")
 		self.reactChance = 0--math.random(50)
 		self.reactSpeed = math.random(1, 10)
 		self.alive = math.random(800)
